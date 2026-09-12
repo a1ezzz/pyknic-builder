@@ -105,7 +105,6 @@ jobs:
               - |
 
                 CODE_DIR="$(pwd)" \
-                GITHUB_PULL_REQUEST_COMMIT="$(git rev-parse "$( [[ -n "${GITHUB_PULL_REQUEST_BRANCH_NAME}" ]] && echo "${GITHUB_PULL_REQUEST_BRANCH_NAME}" || echo "HEAD" )")" \
                 /scripts/run-tests.sh
 
         on_failure:
@@ -145,7 +144,6 @@ jobs:
                     echo "Unknown error spotted!"
 
                     CODE_DIR="$(pwd)" \
-                    GITHUB_PULL_REQUEST_COMMIT="$(git rev-parse "$( [[ -n "${GITHUB_PULL_REQUEST_BRANCH_NAME}" ]] && echo "${GITHUB_PULL_REQUEST_BRANCH_NAME}" || echo "HEAD" )")" \
                     /scripts/reset-feedbacks.sh
 
                     if [[ -n "${TG_BOT_TOKEN:-}" && -n "${TG_CHAT_ID:-}" ]]; then
