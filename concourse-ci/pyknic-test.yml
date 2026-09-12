@@ -125,6 +125,7 @@ jobs:
               SANDBOX_DIR: "/sandbox"
               PYTHON_VERSION: ((python_version))
               BUILD_URL: "https://concourse-ci.binblob.com/builds/((.:metadata_build_id))"
+              BUILD_BRANCH: ((branch))
               BUILD_PIPELINE_NAME: ((.:metadata_pipeline_name))
               TG_BOT_TOKEN: ((tg_bot_token))
               TG_CHAT_ID: ((tg_chat))
