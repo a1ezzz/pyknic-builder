@@ -19,8 +19,6 @@
 set -eux
 set -o pipefail
 
-# TODO: split to different scripts?
-
 source "$(dirname ${0})/settings.sh"
 
 cd "${CODE_DIR}"
@@ -30,7 +28,6 @@ if [[ -n "${GITHUB_PULL_REQUEST_ID}" ]]; then
     git config user.email "john-doe@concourse-ci"
     git config user.name "John Doe-Concourse"
 
-    # TODO: make a message!!!!
     [[ -z "${GITHUB_PULL_REQUEST_BRANCH_NAME}" ]] && exit -1;
 
     git fetch origin "${GITHUB_PULL_REQUEST_BRANCH_NAME}:${GITHUB_PULL_REQUEST_BRANCH_NAME}"
@@ -40,8 +37,6 @@ if [[ -n "${GITHUB_PULL_REQUEST_ID}" ]]; then
 
     git merge "${GITHUB_PULL_REQUEST_BRANCH_NAME}" --no-commit
 fi
-
-# TODO: reset statuses on start!
 
 pip3 --cache-dir "${PIP_CACHE_DIR}" install virtualenv
 virtualenv -p /usr/local/bin/python "${VENV_DIR}"

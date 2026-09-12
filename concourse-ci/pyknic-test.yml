@@ -10,6 +10,7 @@
 #   python_version -- a version of CPython that is used within the code
 #   tg_bot_token -- access token to Telegram bot
 #   tg_chat -- target chat id to notify
+#   pytest_extra_secrets -- base64-encoded json for pytest
 
 # TODO: get rid off build-metadata-resource
 
@@ -97,6 +98,7 @@ jobs:
             GITHUB_ACCESS_TOKEN: ((github-access-token))
             GITHUB_REPO_NAME: ((repo_name))
             GITHUB_PULL_REQUEST_BRANCH_NAME: ((pull_request_branch_name))
+            PYTEST_EXTRA_SECRETS: ((pytest_extra_secrets))
           run:
             dir: code
             path: /bin/bash
