@@ -15,8 +15,6 @@
 #  - GITHUB_PULL_REQUEST_ID
 #  - GITHUB_ACCESS_TOKEN
 #  - GITHUB_REPO_NAME
-#  - GITHUB_PULL_REQUEST_COMMIT
-#  - GITHUB_PULL_REQUEST_BRANCH_NAME
 
 set -eux
 set -o pipefail
@@ -29,17 +27,18 @@ cd "${CODE_DIR}"
 
 if [[ -n "${GITHUB_PULL_REQUEST_ID}" ]]; then
 
-    /scripts/reset-feedbacks.sh
-
     git config user.email "john-doe@concourse-ci"
     git config user.name "John Doe-Concourse"
 
     # TODO: make a message!!!!
     [[ -z "${GITHUB_PULL_REQUEST_BRANCH_NAME}" ]] && exit -1;
 
-    git fetch origin '${PULL_REQUEST_BRANCH_NAME}:${PULL_REQUEST_BRANCH_NAME}'
-    git merge '${PULL_REQUEST_BRANCH_NAME}' --no-commit
+    git fetch origin "${GITHUB_PULL_REQUEST_BRANCH_NAME}:${GITHUB_PULL_REQUEST_BRANCH_NAME}"
+    _GITHUB_PULL_REQUEST_COMMIT=$(git rev-parse "${GITHUB_PULL_REQUEST_BRANCH_NAME}")
 
+    /scripts/reset-feedbacks.sh
+
+    git merge "${GITHUB_PULL_REQUEST_BRANCH_NAME}" --no-commit
 fi
 
 # TODO: reset statuses on start!
