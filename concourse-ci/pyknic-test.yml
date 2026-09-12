@@ -76,7 +76,7 @@ jobs:
           image_resource:
             type: registry-image
             source:
-              repository: a1ezzz/pyknic-concourse-base-image-test
+              repository: a1ezzz/pyknic-concourse-base-image
               tag: py-alpine-((python_version))
           inputs:
             - name: code
@@ -113,7 +113,7 @@ jobs:
             image_resource:
               type: registry-image
               source:
-                repository: a1ezzz/pyknic-concourse-base-image-test
+                repository: a1ezzz/pyknic-concourse-base-image
                 tag: py-alpine-((python_version))
             inputs:
               - name: code
