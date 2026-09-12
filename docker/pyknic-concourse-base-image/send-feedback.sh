@@ -59,7 +59,7 @@ if [[ -n "${TG_BOT_TOKEN:-}" && -n "${TG_CHAT_ID:-}" ]]; then
 
 fi
 
-if [[ -n "${GITHUB_PULL_REQUEST_ID:-}" && -n "${GITHUB_ACCESS_TOKEN:-}" && -n "${GITHUB_PULL_REQUEST_COMMIT:-}" ]]; then
+if [[ -n "${GITHUB_PULL_REQUEST_ID:-}" && -n "${GITHUB_ACCESS_TOKEN:-}" && -n "${GITHUB_PULL_REQUEST_BRANCH_NAME:-}" ]]; then
 
     if [[ -z "${_GITHUB_PULL_REQUEST_COMMIT:-}" ]]; then
         _GITHUB_PULL_REQUEST_COMMIT="$(git rev-parse "${GITHUB_PULL_REQUEST_BRANCH_NAME}")"
