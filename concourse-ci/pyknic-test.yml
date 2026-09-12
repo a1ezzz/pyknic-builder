@@ -101,8 +101,6 @@ jobs:
             args:
               - -eucx
               - |
-              
-                unknown-command
 
                 CODE_DIR="$(pwd)" \
                 BUILD_COMMIT="$(git rev-parse $( [[ -n "((pull_request_id))" ]] && echo "((pull_request_branch_name))" || echo "HEAD" ))" \
