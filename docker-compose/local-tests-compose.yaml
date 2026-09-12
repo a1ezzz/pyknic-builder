@@ -1,0 +1,97 @@
+services:
+
+  git-server:
+    image: a1ezzz/pyknic-local-test-git:260912
+    restart: unless-stopped
+    networks:
+      concourse-ci-net:
+        ipv4_address: 172.10.0.10
+
+    environment:
+      SOURCES_DIR: "/sources"
+      BRANCH: "test-branch"
+    volumes:
+      - type: bind
+        source: "${LOCAL_FILES}"
+        target: /sources
+
+  concourse-ci-psql:
+    image: postgres:18.4@sha256:32ca0af8e77bfb8c6610c488e4691f83f972a3e9e64d3b02facf3ab111ad5500
+    restart: unless-stopped
+    networks:
+      - concourse-ci-net
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust  # usually unsafe, but OK since network is hidden
+    configs:
+      - source: pgsql_init_script
+        target: /docker-entrypoint-initdb.d/concourse_ci_init.sql
+
+  concourse-ci:
+    image: "concourse/concourse:7.13.2@sha256:cc40ecf37fee9056dad7e0b0751d321e8791449e3fe56603995c2e56a80ad1c1"
+    command: quickstart
+    restart: unless-stopped
+    depends_on:
+      - concourse-ci-psql
+      - git-server
+    networks:
+      - concourse-ci-net
+    ports:
+      - 8080:8080/tcp
+    privileged: true
+    environment:
+      CONCOURSE_POSTGRES_HOST: concourse-ci-psql
+      CONCOURSE_POSTGRES_USER: concourse_user
+      CONCOURSE_POSTGRES_DATABASE: concourse
+
+      CONCOURSE_ADD_LOCAL_USER: "concourse:concourse"
+      CONCOURSE_MAIN_TEAM_LOCAL_USER: "concourse"
+
+      CONCOURSE_WORKER_BAGGAGECLAIM_DRIVER: overlay
+      CONCOURSE_WORKER_RUNTIME: "containerd"
+      CONCOURSE_WORKER_CONTAINERD_DNS_SERVER: "8.8.8.8"
+
+  local-test:
+    image: a1ezzz/pyknic-local-test-runner:7.13.2
+    depends_on:
+      - concourse-ci-psql
+      - concourse-ci
+    networks:
+      - concourse-ci-net
+    environment:
+      CONCOURSE_HOST: concourse-ci:8080
+      CONCOURSE_USER: concourse
+      CONCOURSE_PASS: concourse
+
+      # if the "CONCOURSE_PIPELINE_URI" variable is not set, then the local file "concourse-ci/pyknic-test.yml" is used
+      CONCOURSE_PIPELINE_URI: "https://raw.githubusercontent.com/a1ezzz/pyknic-builder/refs/heads/main/concourse-ci/pyknic-test.yml"
+
+      BRANCH: "test-branch"
+      PYTHON_VERSION: "${PYTHON_VERSION}"
+      REPO_URI: "http://172.10.0.10:8000"
+      SOURCES_DIR: "/sources"
+
+    volumes:
+      - type: bind
+        source: "${LOCAL_FILES}"
+        target: /sources
+
+networks:
+
+  concourse-ci-net:
+    name: concourse-ci-net
+    ipam:
+      config:
+        - subnet: 172.10.0.0/24
+          ip_range: 172.10.0.128/25
+          gateway: 172.10.0.1
+
+configs:
+  pgsql_init_script:
+    content: |
+      CREATE USER concourse_user;
+
+      CREATE DATABASE concourse;
+
+      ALTER DATABASE concourse OWNER TO concourse_user;
+
+      GRANT ALL PRIVILEGES ON DATABASE concourse TO concourse_user;
