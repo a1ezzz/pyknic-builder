@@ -5,7 +5,6 @@
 #   branch -- a name of a git branch this pipeline is running on
 #   github-access-token -- a token for PR status updates
 #   pull_request_id -- a number of PR
-#   commit -- a commit a PR is related to
 #   pull_request_branch_name -- if defined then it is a name of a source branch, that PR is related to
 #   extra_branch -- the same as pull_request_branch_name (or the branch)
 #   python_version -- a version of CPython that is used within the code
@@ -97,6 +96,7 @@ jobs:
             GITHUB_PULL_REQUEST_ID: ((pull_request_id))
             GITHUB_ACCESS_TOKEN: ((github-access-token))
             GITHUB_REPO_NAME: ((repo_name))
+            GITHUB_PULL_REQUEST_BRANCH_NAME: ((pull_request_branch_name))
           run:
             dir: code
             path: /bin/bash
@@ -105,7 +105,7 @@ jobs:
               - |
 
                 CODE_DIR="$(pwd)" \
-                BUILD_COMMIT="$(git rev-parse $( [[ -n "((pull_request_id))" ]] && echo "((pull_request_branch_name))" || echo "HEAD" ))" \
+                GITHUB_PULL_REQUEST_COMMIT="$(git rev-parse "$( [[ -n "${GITHUB_PULL_REQUEST_BRANCH_NAME}" ]] && echo "${GITHUB_PULL_REQUEST_BRANCH_NAME}" || echo "HEAD" )")" \
                 /scripts/run-tests.sh
 
         on_failure:
@@ -133,6 +133,7 @@ jobs:
               GITHUB_PULL_REQUEST_ID: ((pull_request_id))
               GITHUB_ACCESS_TOKEN: ((github-access-token))
               GITHUB_REPO_NAME: ((repo_name))
+              GITHUB_PULL_REQUEST_BRANCH_NAME: ((pull_request_branch_name))
             run:
               dir: code
               path: /bin/bash
@@ -144,7 +145,7 @@ jobs:
                     echo "Unknown error spotted!"
 
                     CODE_DIR="$(pwd)" \
-                    BUILD_COMMIT="$(git rev-parse $( [[ -n "((pull_request_id))" ]] && echo "((pull_request_branch_name))" || echo "HEAD" ))" \
+                    GITHUB_PULL_REQUEST_COMMIT="$(git rev-parse "$( [[ -n "${GITHUB_PULL_REQUEST_BRANCH_NAME}" ]] && echo "${GITHUB_PULL_REQUEST_BRANCH_NAME}" || echo "HEAD" )")" \
                     /scripts/reset-feedbacks.sh
 
                     if [[ -n "${TG_BOT_TOKEN:-}" && -n "${TG_CHAT_ID:-}" ]]; then

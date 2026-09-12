@@ -3,7 +3,6 @@
 # required env-vars are:
 #  - BUILD_URL
 #  - BUILD_BRANCH
-#  - BUILD_COMMIT
 #  - BUILD_PIPELINE_NAME
 
 # optional env-vars are:
@@ -13,6 +12,7 @@
 #  - GITHUB_PULL_REQUEST_ID
 #  - GITHUB_ACCESS_TOKEN
 #  - GITHUB_REPO_NAME
+#  - GITHUB_PULL_REQUEST_COMMIT
 
 set -eux
 set -o pipefail

@@ -3,7 +3,6 @@
 # required env-vars are:
 #  - BUILD_URL
 #  - BUILD_BRANCH
-#  - BUILD_COMMIT
 #  - BUILD_PIPELINE_NAME
 
 # optional env-vars are:
@@ -13,6 +12,7 @@
 #  - GITHUB_PULL_REQUEST_ID
 #  - GITHUB_ACCESS_TOKEN
 #  - GITHUB_REPO_NAME
+#  - GITHUB_PULL_REQUEST_COMMIT
 
 set -eux
 set -o pipefail
@@ -59,7 +59,7 @@ if [[ -n "${TG_BOT_TOKEN:-}" && -n "${TG_CHAT_ID:-}" ]]; then
 
 fi
 
-if [[ -n "${GITHUB_PULL_REQUEST_ID:-}" && -n "${GITHUB_ACCESS_TOKEN:-}" ]]; then
+if [[ -n "${GITHUB_PULL_REQUEST_ID:-}" && -n "${GITHUB_ACCESS_TOKEN:-}" && -n "${GITHUB_PULL_REQUEST_COMMIT:-}" ]]; then
 
   GITHUB_FEEDBACK="{
     \"state\": \"${TASK_STATE}\",
@@ -73,7 +73,7 @@ if [[ -n "${GITHUB_PULL_REQUEST_ID:-}" && -n "${GITHUB_ACCESS_TOKEN:-}" ]]; then
       -H "Accept: application/vnd.github+json" \
       -H "Authorization: Bearer ${GITHUB_ACCESS_TOKEN}" \
       -H "X-GitHub-Api-Version: 2022-11-28" \
-      "https://api.github.com/repos/${GITHUB_REPO_NAME}/statuses/${BUILD_COMMIT}" \
+      "https://api.github.com/repos/${GITHUB_REPO_NAME}/statuses/${GITHUB_PULL_REQUEST_COMMIT}" \
       -d "${GITHUB_FEEDBACK}"
 
   echo
