@@ -1,6 +1,7 @@
 
 # input vars:
 #   repo_uri -- a git repository URI
+#   repo_name -- a name of a repository on github
 #   branch -- a name of a git branch this pipeline is running on
 #   github-access-token -- a token for PR status updates
 #   pull_request_id -- a number of PR
@@ -95,6 +96,7 @@ jobs:
             TG_API_HOST: ((tg_api_host))
             GITHUB_PULL_REQUEST_ID: ((pull_request_id))
             GITHUB_ACCESS_TOKEN: ((github-access-token))
+            GITHUB_REPO_NAME: ((repo_name))
           run:
             dir: code
             path: /bin/bash
@@ -130,6 +132,7 @@ jobs:
               TG_API_HOST: ((tg_api_host))
               GITHUB_PULL_REQUEST_ID: ((pull_request_id))
               GITHUB_ACCESS_TOKEN: ((github-access-token))
+              GITHUB_REPO_NAME: ((repo_name))
             run:
               dir: code
               path: /bin/bash

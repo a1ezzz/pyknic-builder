@@ -13,6 +13,7 @@
 #  - TG_API_HOST
 #  - GITHUB_PULL_REQUEST_ID
 #  - GITHUB_ACCESS_TOKEN
+#  - GITHUB_REPO_NAME
 
 set -eux
 set -o pipefail
